@@ -71,6 +71,10 @@ router.use(function(_req, _res, next) {
     console.log(restURI+_req.url);
     console.log(_req.body);
 
+    _res.type('json');
+    _res.send({});
+
+/**
     dbClient.post(restURI+_req.url, _req.body, (err, req, res, data) => {
       if (err) {
         console.log("Error from DB call: " + err.statusCode);
@@ -80,6 +84,7 @@ router.use(function(_req, _res, next) {
       _res.type('json');
       _res.send(data);
     });
+**/
   }
 });
 
