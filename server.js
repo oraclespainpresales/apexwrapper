@@ -70,6 +70,7 @@ router.use(function(_req, _res, next) {
 
     console.log(restURI+_req.url);
     console.log(util.inspect(_req.body, true, null));
+    console.log(util.inspect(_req.body[0].payload.data, true, null));
 
     _res.type('json');
     _res.send({});
