@@ -69,7 +69,7 @@ router.use(function(_req, _res, next) {
   } else if ( _req.method === POST) {
 
     console.log(restURI+_req.url);
-    console.log(_req.body);
+    console.log(util.inspect(_req.body, true, null));
 
     _res.type('json');
     _res.send({});
