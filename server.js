@@ -6,6 +6,7 @@ var express = require('express')
   , http = require('http')
   , bodyParser = require('body-parser')
   , util = require('util')
+  , log = require('npmlog-ts')
   , _ = require('lodash')
 ;
 
@@ -15,6 +16,9 @@ const GET = 'GET';
 const POST = 'POST';
 const ALLOWEDVERBS = [GET,POST];
 const restURI  = '/apex/pdb1';
+
+log.timestamp = true;
+log.level = 'verbose';
 
 // Instantiate classes & servers
 var app    = express()
@@ -33,13 +37,13 @@ var app    = express()
 // Main handlers registration - BEGIN
 // Main error handler
 process.on('uncaughtException', function (err) {
-  console.log("Uncaught Exception: " + err);
-  console.log("Uncaught Exception: " + err.stack);
+  log.error("","Uncaught Exception: " + err);
+  log.error("","Uncaught Exception: " + err.stack);
 });
 // Detect CTRL-C
 process.on('SIGINT', function() {
-  console.log("Caught interrupt signal");
-  console.log("Exiting gracefully");
+  log.error("","Caught interrupt signal");
+  log.error("","Exiting gracefully");
   process.exit(2);
 });
 // Main handlers registration - END
@@ -64,7 +68,7 @@ router.use(function(_req, _res, next) {
   if ( _req.method === GET) {
     dbClient.get(restURI+_req.url, (err, req, res, data) => {
       if (err) {
-        console.log("Error from DB call: " + err.statusCode);
+        log.error("","Error from DB call: " + err.statusCode);
         _res.status(err.statusCode).send(err.body);
         return;
       }
@@ -73,12 +77,12 @@ router.use(function(_req, _res, next) {
     });
   } else if ( _req.method === POST) {
 /**
-    console.log(restURI+_req.url);
-    console.log(util.inspect(_req.body, true, null));
+    log.info("",restURI+_req.url);
+    log.info("",util.inspect(_req.body, true, null));
 **/
     dbClient.post(restURI+_req.url, _req.body, (err, req, res, data) => {
       if (err) {
-        console.log("Error from DB call: " + err.statusCode);
+        log.error("","Error from DB call: " + err.statusCode);
         _res.status(err.statusCode).send(err.body);
         return;
       }
@@ -93,6 +97,6 @@ app.use(restURI, router);
 
 server.listen(PORT, () => {
   _.each(router.stack, (r) => {
-    console.log("Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, restURI);
+    log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, restURI);
   });
 });
