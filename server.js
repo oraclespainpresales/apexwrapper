@@ -17,6 +17,7 @@ const POST    = 'POST';
 const restURI = '/ords/pdb1';
 const ALLOWEDVERBS = [GET,POST];
 
+log.stream = process.stdout;
 log.timestamp = true;
 log.level = 'verbose';
 
