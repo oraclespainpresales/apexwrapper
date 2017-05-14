@@ -10,12 +10,12 @@ var express = require('express')
   , _ = require('lodash')
 ;
 
-//const DBHOST   = "https://129.152.129.94";
-const DBHOST   = "https://ANKIDB";
-const GET = 'GET';
-const POST = 'POST';
+const DBHOST  = "https://new.apex.digitalpracticespain.com";
+const GET     = 'GET';
+const POST    = 'POST';
+const restURI = '/apex/pdb1';
+const restURI = '/ords/pdb1';
 const ALLOWEDVERBS = [GET,POST];
-const restURI  = '/apex/pdb1';
 
 log.timestamp = true;
 log.level = 'verbose';
@@ -76,10 +76,6 @@ router.use(function(_req, _res, next) {
       _res.send(data);
     });
   } else if ( _req.method === POST) {
-/**
-    log.info("",restURI+_req.url);
-    log.info("",util.inspect(_req.body, true, null));
-**/
     dbClient.post(restURI+_req.url, _req.body, (err, req, res, data) => {
       if (err) {
         log.error("","Error from DB call: " + err.statusCode);
