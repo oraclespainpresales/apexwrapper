@@ -15,7 +15,7 @@ const GET     = 'GET';
 const POST    = 'POST';
 //const restURI = '/apex/pdb1';
 const restURI = '/ords/pdb1';
-const ALLOWEDVERBS = [GET,POST];
+const ALLOWEDVERBS = [GET,POST,PUT];
 
 log.stream = process.stdout;
 log.timestamp = true;
@@ -78,6 +78,16 @@ router.use(function(_req, _res, next) {
     });
   } else if ( _req.method === POST) {
     dbClient.post(restURI+_req.url, _req.body, (err, req, res, data) => {
+      if (err) {
+        log.error("","Error from DB call: " + err.statusCode);
+        _res.status(err.statusCode).send(err.body);
+        return;
+      }
+      _res.type('json');
+      _res.send(data);
+    });
+  } else if ( _req.method === PUT) {
+    dbClient.put(restURI+_req.url, _req.body, (err, req, res, data) => {
       if (err) {
         log.error("","Error from DB call: " + err.statusCode);
         _res.status(err.statusCode).send(err.body);
