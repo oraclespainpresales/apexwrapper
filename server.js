@@ -13,6 +13,7 @@ var express = require('express')
 const DBHOST  = "https://new.apex.digitalpracticespain.com";
 const GET     = 'GET';
 const POST    = 'POST';
+const PUT     = 'PUT';
 //const restURI = '/apex/pdb1';
 const restURI = '/ords/pdb1';
 const ALLOWEDVERBS = [GET,POST,PUT];
