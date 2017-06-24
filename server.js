@@ -16,7 +16,7 @@ const POST    = 'POST';
 const PUT     = 'PUT';
 //const restURI = '/apex/pdb1';
 const restURI = '/ords/pdb1';
-const ALLOWEDVERBS = [GET,POST,PUT];
+const ALLOWEDVERBS = [GET,POST,PUT,DELETE];
 
 log.stream = process.stdout;
 log.timestamp = true;
