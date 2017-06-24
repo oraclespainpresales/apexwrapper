@@ -99,14 +99,13 @@ router.use(function(_req, _res, next) {
       _res.send(data);
     });
   } else if ( _req.method === DELETE) {
-    dbClient.del(restURI+_req.url, _req.body, (err, req, res, data) => {
+    dbClient.del(restURI+_req.url, _req.body, (err, req, res) => {
       if (err) {
         log.error("","Error from DB call: " + err.statusCode);
         _res.status(err.statusCode).send(err.body);
         return;
       }
-      _res.type('json');
-      _res.send(data);
+      _res.status(res.statusCode).send();
     });
   }
 });
