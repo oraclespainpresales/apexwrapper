@@ -64,6 +64,7 @@ app.use(function(req, res, next) {
 
 // REST stuff - BEGIN
 router.use(function(_req, _res, next) {
+  console.log(util.inspect(_req, true, null));
   if (!_.includes(ALLOWEDVERBS, _req.method)) {
     _res.status(405).end();
     return;
