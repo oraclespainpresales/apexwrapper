@@ -71,7 +71,8 @@ router.use(function(_req, _res, next) {
   if ( _req.method === GET) {
     dbClient.get(restURI+_req.url, (err, req, res, data) => {
       if (err) {
-        log.error("","Error from DB call: " + err.statusCode);
+        log.error("","[GET] Error from DB call: " + err.statusCode);
+        log.error("", "URI: " + restURI+_req.url);
         _res.status(err.statusCode).send(err.body);
         return;
       }
@@ -81,7 +82,9 @@ router.use(function(_req, _res, next) {
   } else if ( _req.method === POST) {
     dbClient.post(restURI+_req.url, _req.body, (err, req, res, data) => {
       if (err) {
-        log.error("","Error from DB call: " + err.statusCode);
+        log.error("","[POST] Error from DB call: " + err.statusCode);
+        log.error("", "URI: " + restURI+_req.url);
+        log.error("", "Body: " + JSON.stringify(_req.body));
         _res.status(err.statusCode).send(err.body);
         return;
       }
@@ -91,7 +94,9 @@ router.use(function(_req, _res, next) {
   } else if ( _req.method === PUT) {
     dbClient.put(restURI+_req.url, _req.body, (err, req, res, data) => {
       if (err) {
-        log.error("","Error from DB call: " + err.statusCode);
+        log.error("","[PUT] Error from DB call: " + err.statusCode);
+        log.error("", "URI: " + restURI+_req.url);
+        log.error("", "Body: " + JSON.stringify(_req.body));
         _res.status(err.statusCode).send(err.body);
         return;
       }
@@ -101,7 +106,8 @@ router.use(function(_req, _res, next) {
   } else if ( _req.method === DELETE) {
     dbClient.del(restURI+_req.url, (err, req, res) => {
       if (err) {
-        log.error("","Error from DB call: " + err.statusCode);
+        log.error("","[DELETE] Error from DB call: " + err.statusCode);
+        log.error("", "URI: " + restURI+_req.url);
         _res.status(err.statusCode).send(err.body);
         return;
       }
