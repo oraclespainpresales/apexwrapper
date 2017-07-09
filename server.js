@@ -122,6 +122,7 @@ router.use(function(_req, _res, next) {
 
 routerOSA.use(function(req, res, next) {
   console.log(util.inspect(req, true, null));
+  res.status(200).send();
 });
 
 
