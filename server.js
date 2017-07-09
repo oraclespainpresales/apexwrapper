@@ -27,7 +27,7 @@ log.level = 'verbose';
 var app    = express()
   , router = express.Router()
 
-  , OSAHOST = 'http://ankisoa-wls-1:9002'
+  , OSAHOST = 'http://new.soa.digitalpracticespain.com:9002'
   , routerOSA = express.Router()
   , restOSA = '/rth/pulse'
   , osaClient = restify.createJsonClient({
