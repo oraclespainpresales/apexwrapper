@@ -26,6 +26,10 @@ log.level = 'verbose';
 // Instantiate classes & servers
 var app    = express()
   , router = express.Router()
+
+  , routerOSA = express.Router()
+  , restOSA = '/rth/pulse'
+
   , server = http.createServer(app)
   , dbClient = restify.createStringClient({
     url: DBHOST,
@@ -54,7 +58,7 @@ process.on('SIGINT', function() {
 // REST engine initial setup
 const PORT = 9997;
 
-//app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -116,7 +120,15 @@ router.use(function(_req, _res, next) {
   }
 });
 
+router.use(function(req, res, next) {
+  console.log(util.inspect(req, true, null));
+});
+
+
 app.use(restURI, router);
+
+app.use(restOSA, routerOSA);
+
 // REST stuff - END
 
 server.listen(PORT, () => {
