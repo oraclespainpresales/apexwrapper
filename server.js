@@ -120,7 +120,7 @@ router.use(function(_req, _res, next) {
   }
 });
 
-router.use(function(req, res, next) {
+routerOSA.use(function(req, res, next) {
   console.log(util.inspect(req, true, null));
 });
 
@@ -133,7 +133,6 @@ app.use(restOSA, routerOSA);
 
 server.listen(PORT, () => {
   _.each(router.stack, (r) => {
-    console.log(r);
     log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, restURI);
   });
 });
