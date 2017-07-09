@@ -128,11 +128,13 @@ router.use(function(_req, _res, next) {
 });
 
 routerOSA.use(function(_req, _res, next) {
+  console.log("request");
   osaClient.post(restOSA, _req.body, (err, req, res, data) => {
     if (err) {
       _res.status(err.statusCode).send(err.body);
       return;
     }
+    console.log(res);
     _res.status(200).send();
   });
 });
