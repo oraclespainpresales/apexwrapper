@@ -76,6 +76,7 @@ app.use(function(req, res, next) {
 // REST stuff - BEGIN
 router.use(function(_req, _res, next) {
   if (!_.includes(ALLOWEDVERBS, _req.method)) {
+    log.error("","Not supported verb: " +  _req.method);
     _res.status(405).end();
     return;
   }
