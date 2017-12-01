@@ -12,12 +12,16 @@ var express = require('express')
 ;
 
 const DBHOST  = "https://new.apex.digitalpracticespain.com";
+const SOAHOST = "http://new.soa.digitalpracticespain.com";
+const OSAHOST = 'http://new.soa.digitalpracticespain.com:9002';
 const GET     = 'GET';
 const POST    = 'POST';
 const PUT     = 'PUT';
 const DELETE  = 'DELETE';
-//const restURI = '/apex/pdb1';
-const restURI = '/ords/pdb1';
+//const dbURI = '/apex/pdb1';
+const dbURI   = '/ords/pdb1';
+const soaURI  = '/admin/gadgets';
+const osaURI  = '/rth/pulse';
 const ALLOWEDVERBS = [GET,POST,PUT,DELETE];
 
 log.stream = process.stdout;
@@ -26,22 +30,26 @@ log.level = 'verbose';
 
 // Instantiate classes & servers
 var app    = express()
-  , router = express.Router()
-
-  , OSAHOST = 'http://new.soa.digitalpracticespain.com:9002'
+  , routerAPEX = express.Router()
   , routerOSA = express.Router()
-  , restOSA = '/rth/pulse'
+  , routerSOA = express.Router()
   , osaClient = restify.createJsonClient({
     url: OSAHOST,
     headers: {
       'Content-Type': 'application/json'
     }
   })
-
   , server = http.createServer(app)
   , dbClient = restify.createStringClient({
     url: DBHOST,
     rejectUnauthorized: false
+  })
+  , soaClient = restify.createJsonClient({
+    url: SOAHOST,
+    rejectUnauthorized: false,
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
 ;
 
@@ -79,17 +87,17 @@ app.use(function(req, res, next) {
 **/
 
 // REST stuff - BEGIN
-router.use(function(_req, _res, next) {
+routerAPEX.use(function(_req, _res, next) {
   if (!_.includes(ALLOWEDVERBS, _req.method)) {
-    log.error("","Not supported verb: " +  _req.method);
+    log.error("","[APEX] Not supported verb: " +  _req.method);
     _res.status(405).end();
     return;
   }
   if ( _req.method === GET) {
-    dbClient.get(restURI+_req.url, (err, req, res, data) => {
+    dbClient.get(dbURI+_req.url, (err, req, res, data) => {
       if (err) {
-        log.error("","[GET] Error from DB call: " + err.statusCode);
-        log.error("", "URI: " + restURI+_req.url);
+        log.error("","[APEX] [GET] Error from DB call: " + err.statusCode);
+        log.error("", "[APEX] URI: " + dbURI+_req.url);
         _res.status(err.statusCode).send(err.body);
         return;
       }
@@ -97,11 +105,11 @@ router.use(function(_req, _res, next) {
       _res.send(data);
     });
   } else if ( _req.method === POST) {
-    dbClient.post(restURI+_req.url, _req.body, (err, req, res, data) => {
+    dbClient.post(dbURI+_req.url, _req.body, (err, req, res, data) => {
       if (err) {
-        log.error("","[POST] Error from DB call: " + err.statusCode);
-        log.error("", "URI: " + restURI+_req.url);
-        log.error("", "Body: " + JSON.stringify(_req.body));
+        log.error("","[APEX] [POST] Error from DB call: " + err.statusCode);
+        log.error("", "[APEX] URI: " + dbURI+_req.url);
+        log.error("", "[APEX] Body: " + JSON.stringify(_req.body));
         _res.status(err.statusCode).send(err.body);
         return;
       }
@@ -109,11 +117,11 @@ router.use(function(_req, _res, next) {
       _res.send(data);
     });
   } else if ( _req.method === PUT) {
-    dbClient.put(restURI+_req.url, _req.body, (err, req, res, data) => {
+    dbClient.put(dbURI+_req.url, _req.body, (err, req, res, data) => {
       if (err) {
-        log.error("","[PUT] Error from DB call: " + err.statusCode);
-        log.error("", "URI: " + restURI+_req.url);
-        log.error("", "Body: " + JSON.stringify(_req.body));
+        log.error("","[APEX] [PUT] Error from DB call: " + err.statusCode);
+        log.error("", "[APEX] URI: " + dbURI+_req.url);
+        log.error("", "[APEX] Body: " + JSON.stringify(_req.body));
         _res.status(err.statusCode).send(err.body);
         return;
       }
@@ -121,10 +129,64 @@ router.use(function(_req, _res, next) {
       _res.send(data);
     });
   } else if ( _req.method === DELETE) {
-    dbClient.del(restURI+_req.url, (err, req, res) => {
+    dbClient.del(dbURI+_req.url, (err, req, res) => {
       if (err) {
-        log.error("","[DELETE] Error from DB call: " + err.statusCode);
-        log.error("", "URI: " + restURI+_req.url);
+        log.error("","[APEX] [DELETE] Error from DB call: " + err.statusCode);
+        log.error("", "[APEX] URI: " + dbURI+_req.url);
+        _res.status(err.statusCode).send(err.body);
+        return;
+      }
+      _res.status(res.statusCode).send();
+    });
+  }
+});
+
+routerSOA.use(function(_req, _res, next) {
+  if (!_.includes(ALLOWEDVERBS, _req.method)) {
+    log.error("","[SOA] Not supported verb: " +  _req.method);
+    _res.status(405).end();
+    return;
+  }
+  if ( _req.method === GET) {
+    soaClient.get(soaURI+_req.url, (err, req, res, data) => {
+      if (err) {
+        log.error("","[SOA] [GET] Error from SOA call: " + err.statusCode);
+        log.error("", "[SOA] URI: " + soaURI + _req.url);
+        _res.status(err.statusCode).send(err.body);
+        return;
+      }
+      _res.type('json');
+      _res.send(data);
+    });
+  } else if ( _req.method === POST) {
+    soaClient.post(soaURI+_req.url, _req.body, (err, req, res, data) => {
+      if (err) {
+        log.error("","[SOA] [POST] Error from SOA call: " + err.statusCode);
+        log.error("", "[SOA] URI: " + soaURI + _req.url);
+        log.error("", "[SOA] Body: " + JSON.stringify(_req.body));
+        _res.status(err.statusCode).send(err.body);
+        return;
+      }
+      _res.type('json');
+      _res.send(data);
+    });
+  } else if ( _req.method === PUT) {
+    soaClient.put(soaURI+_req.url, _req.body, (err, req, res, data) => {
+      if (err) {
+        log.error("","[SOA] [PUT] Error from SOA call: " + err.statusCode);
+        log.error("", "[SOA] URI: " + soaURI + _req.url);
+        log.error("", "[SOA] Body: " + JSON.stringify(_req.body));
+        _res.status(err.statusCode).send(err.body);
+        return;
+      }
+      _res.type('json');
+      _res.send(data);
+    });
+  } else if ( _req.method === DELETE) {
+    soaClient.del(soaURI+_req.url, (err, req, res) => {
+      if (err) {
+        log.error("","[SOA] [DELETE] Error from SOA call: " + err.statusCode);
+        log.error("", "[SOA] URI: " + soaURI + _req.url);
         _res.status(err.statusCode).send(err.body);
         return;
       }
@@ -135,7 +197,7 @@ router.use(function(_req, _res, next) {
 
 routerOSA.use(function(_req, _res, next) {
   console.log("request");
-  osaClient.post(restOSA, _req.body, (err, req, res, data) => {
+  osaClient.post(osaURI, _req.body, (err, req, res, data) => {
     if (err) {
       _res.status(err.statusCode).send(err.body);
       return;
@@ -145,14 +207,18 @@ routerOSA.use(function(_req, _res, next) {
   });
 });
 
-app.use(restURI, router);
+app.use(dbURI, routerAPEX);
 
-app.use(restOSA, routerOSA);
+app.use(soaURI, routerSOA);
+
+app.use(osaURI, routerOSA);
 
 // REST stuff - END
 
 server.listen(PORT, () => {
-  _.each(router.stack, (r) => {
-    log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, restURI);
-  });
+  log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, dbURI);
+  log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, soaURI);
+  log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, osaURI);
+//  _.each(routerAPEX.stack, (r) => {
+//  });
 });
