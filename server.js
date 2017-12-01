@@ -20,7 +20,7 @@ const PUT     = 'PUT';
 const DELETE  = 'DELETE';
 //const dbURI = '/apex/pdb1';
 const dbURI   = '/ords/pdb1';
-const soaURI  = '/admin/gadgets';
+const soaURI  = '/admin';
 const osaURI  = '/rth/pulse';
 const ALLOWEDVERBS = [GET,POST,PUT,DELETE];
 
