@@ -247,6 +247,8 @@ app.use(dbURI, routerAPEX);
 
 app.use(osbURI, routerOSB);
 
+app.use(soaURI, routerSOA);
+
 app.use(osaURI, routerOSA);
 
 // REST stuff - END
