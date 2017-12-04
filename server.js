@@ -254,6 +254,7 @@ app.use(osaURI, routerOSA);
 server.listen(PORT, () => {
   log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, dbURI);
   log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, osbURI);
+  log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBSSOA, PORT, soaURI);
   log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, osaURI);
 //  _.each(routerAPEX.stack, (r) => {
 //  });
