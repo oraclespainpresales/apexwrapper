@@ -20,9 +20,11 @@ const PUT     = 'PUT';
 const DELETE  = 'DELETE';
 //const dbURI = '/apex/pdb1';
 const dbURI   = '/ords/pdb1';
-const soaURI  = '/admin';
+const osbURI  = '/admin';
+const soaURI  = '/soa-infra';
 const osaURI  = '/rth/pulse';
 const ALLOWEDVERBS = [GET,POST,PUT,DELETE];
+const ALLOWEDVERBSSOA = [GET,POST];
 
 log.stream = process.stdout;
 log.timestamp = true;
@@ -32,7 +34,7 @@ log.level = 'verbose';
 var app    = express()
   , routerAPEX = express.Router()
   , routerOSA = express.Router()
-  , routerSOA = express.Router()
+  , routerOSB = express.Router()
   , osaClient = restify.createJsonClient({
     url: OSAHOST,
     headers: {
@@ -48,7 +50,8 @@ var app    = express()
     url: SOAHOST,
     rejectUnauthorized: false,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     }
   })
 ;
@@ -141,8 +144,62 @@ routerAPEX.use(function(_req, _res, next) {
   }
 });
 
-routerSOA.use(function(_req, _res, next) {
+routerOSB.use(function(_req, _res, next) {
   if (!_.includes(ALLOWEDVERBS, _req.method)) {
+    log.error("","[OSB] Not supported verb: " +  _req.method);
+    _res.status(405).end();
+    return;
+  }
+  if ( _req.method === GET) {
+    soaClient.get(osbURI+_req.url, (err, req, res, data) => {
+      if (err) {
+        log.error("","[OSB] [GET] Error from OSB call: " + err.statusCode);
+        log.error("", "[OSB] URI: " + osbURI + _req.url);
+        _res.status(err.statusCode).send(err.body);
+        return;
+      }
+      _res.type('json');
+      _res.send(data);
+    });
+  } else if ( _req.method === POST) {
+    soaClient.post(osbURI+_req.url, _req.body, (err, req, res, data) => {
+      if (err) {
+        log.error("","[OSB] [POST] Error from OSB call: " + err.statusCode);
+        log.error("", "[OSB] URI: " + osbURI + _req.url);
+        log.error("", "[OSB] Body: " + JSON.stringify(_req.body));
+        _res.status(err.statusCode).send(err.body);
+        return;
+      }
+      _res.type('json');
+      _res.send(data);
+    });
+  } else if ( _req.method === PUT) {
+    soaClient.put(osbURI+_req.url, _req.body, (err, req, res, data) => {
+      if (err) {
+        log.error("","[OSB] [PUT] Error from OSB call: " + err.statusCode);
+        log.error("", "[OSB] URI: " + osbURI + _req.url);
+        log.error("", "[OSB] Body: " + JSON.stringify(_req.body));
+        _res.status(err.statusCode).send(err.body);
+        return;
+      }
+      _res.type('json');
+      _res.send(data);
+    });
+  } else if ( _req.method === DELETE) {
+    soaClient.del(osbURI+_req.url, (err, req, res) => {
+      if (err) {
+        log.error("","[OSB] [DELETE] Error from OSB call: " + err.statusCode);
+        log.error("", "[OSB] URI: " + osbURI + _req.url);
+        _res.status(err.statusCode).send(err.body);
+        return;
+      }
+      _res.status(res.statusCode).send();
+    });
+  }
+});
+
+routerSOA.use(function(_req, _res, next) {
+  if (!_.includes(ALLOWEDVERBSSOA, _req.method)) {
     log.error("","[SOA] Not supported verb: " +  _req.method);
     _res.status(405).end();
     return;
@@ -170,28 +227,6 @@ routerSOA.use(function(_req, _res, next) {
       _res.type('json');
       _res.send(data);
     });
-  } else if ( _req.method === PUT) {
-    soaClient.put(soaURI+_req.url, _req.body, (err, req, res, data) => {
-      if (err) {
-        log.error("","[SOA] [PUT] Error from SOA call: " + err.statusCode);
-        log.error("", "[SOA] URI: " + soaURI + _req.url);
-        log.error("", "[SOA] Body: " + JSON.stringify(_req.body));
-        _res.status(err.statusCode).send(err.body);
-        return;
-      }
-      _res.type('json');
-      _res.send(data);
-    });
-  } else if ( _req.method === DELETE) {
-    soaClient.del(soaURI+_req.url, (err, req, res) => {
-      if (err) {
-        log.error("","[SOA] [DELETE] Error from SOA call: " + err.statusCode);
-        log.error("", "[SOA] URI: " + soaURI + _req.url);
-        _res.status(err.statusCode).send(err.body);
-        return;
-      }
-      _res.status(res.statusCode).send();
-    });
   }
 });
 
@@ -209,7 +244,7 @@ routerOSA.use(function(_req, _res, next) {
 
 app.use(dbURI, routerAPEX);
 
-app.use(soaURI, routerSOA);
+app.use(osbURI, routerOSB);
 
 app.use(osaURI, routerOSA);
 
@@ -217,7 +252,7 @@ app.use(osaURI, routerOSA);
 
 server.listen(PORT, () => {
   log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, dbURI);
-  log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, soaURI);
+  log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, osbURI);
   log.info("","Listening for any '%s' request at http://localhost:%s%s/*", ALLOWEDVERBS, PORT, osaURI);
 //  _.each(routerAPEX.stack, (r) => {
 //  });
