@@ -34,6 +34,7 @@ log.level = 'verbose';
 var app    = express()
   , routerAPEX = express.Router()
   , routerOSA = express.Router()
+  , routerSOA = express.Router()
   , routerOSB = express.Router()
   , osaClient = restify.createJsonClient({
     url: OSAHOST,
