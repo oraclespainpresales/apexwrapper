@@ -234,6 +234,7 @@ routerSOA.use(function(_req, _res, next) {
 routerOSA.use(function(_req, _res, next) {
 
   console.log(util.inspect(_req.headers, true, null));
+  console.log(util.inspect(_req.body, true, null));
   _res.status(200).send();
 
 /**
