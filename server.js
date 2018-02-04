@@ -232,15 +232,11 @@ routerSOA.use(function(_req, _res, next) {
 });
 
 routerOSA.use(function(_req, _res, next) {
-
-  console.log(util.inspect(_req.headers, true, null));
-  console.log(util.inspect(_req.body, true, null));
   osaClient.post(osaURI, _req.body, (err, req, res, data) => {
     if (err) {
       _res.status(err.statusCode).send(err.body);
       return;
     }
-    console.log(res);
     _res.status(200).send();
   });
 });
