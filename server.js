@@ -233,8 +233,7 @@ routerSOA.use(function(_req, _res, next) {
 
 routerOSA.use(function(_req, _res, next) {
 
-  console.log("request");
-  console.log(util.inspect(_req, true, null));
+  console.log(util.inspect(_req.headers, true, null));
   _res.status(200).send();
 
 /**
