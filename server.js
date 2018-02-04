@@ -235,9 +235,6 @@ routerOSA.use(function(_req, _res, next) {
 
   console.log(util.inspect(_req.headers, true, null));
   console.log(util.inspect(_req.body, true, null));
-  _res.status(200).send();
-
-/**
   osaClient.post(osaURI, _req.body, (err, req, res, data) => {
     if (err) {
       _res.status(err.statusCode).send(err.body);
@@ -246,7 +243,6 @@ routerOSA.use(function(_req, _res, next) {
     console.log(res);
     _res.status(200).send();
   });
-**/
 });
 
 app.use(dbURI, routerAPEX);
