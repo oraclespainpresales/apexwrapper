@@ -22,7 +22,7 @@ const DELETE  = 'DELETE';
 const dbURI   = '/ords/pdb1';
 const osbURI  = '/admin';
 const soaURI  = '/soa-infra';
-const osaURI  = '/rth/pulse';
+const osaURI  = '/rth/pulse/raw';
 const ALLOWEDVERBS = [GET,POST,PUT,DELETE];
 const ALLOWEDVERBSSOA = [GET,POST];
 
