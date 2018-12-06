@@ -11,9 +11,9 @@ var express = require('express')
   , cors = require('cors')
 ;
 
-const DBHOST  = "https://new.apex.digitalpracticespain.com";
-const SOAHOST = "http://new.soa.digitalpracticespain.com";
-const OSAHOST = 'http://new.soa.digitalpracticespain.com:9002';
+const DBHOST  = "https://apex.wedoteam.io";
+const SOAHOST = "http://soa.wedoteam.io";
+const OSAHOST = 'http://soa.wedoteam.io:9002';
 const GET     = 'GET';
 const POST    = 'POST';
 const PUT     = 'PUT';
